@@ -169,6 +169,32 @@ bool check(const char *word)
 // Unloads dictionary from memory, returning true if successful else false
 bool unload(void)
 {
-    // TODO
-    return false;
+    for (int i = 0; i <= LENGTH; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            clearmemory(root->children[j]);
+        }
+    }
+    
+    return true;
+}
+
+
+int clearmemory(node *curr)
+{
+    if (!current)
+    {
+        return 0;
+    }
+    else
+    {
+        for (int i = 0; i < N; i++)
+        {
+            current = current->children[i];
+            clearmemory(current);
+        }
+        free(current);
+    }
+    return 0;
 }
