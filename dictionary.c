@@ -8,7 +8,6 @@
 
 #include "dictionary.h"
 
-
 // Represents number of children for each node in a trie
 #define N 27
 
@@ -16,42 +15,7 @@
 typedef struct node
 {
     bool is_word;
-    struct node *children[N];
-}
-node;
-
-// Represents a trie
-node *root;
-
-// num of words in dictionary
-int numWords = 0;
-
-// node of the alphabet being computed
-node *current;
-    
-// previous node for experimental purposes
-node *previous;
-    
-char *alphabet = "abcdefghijklmnopqrstuvwxyz'";
-
-// Loads dictionary into memory, returning true if successful e// Implements a dictionary's functionality
-
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
-#include "dictionary.h"
-
-// Represents number of children for each node in a trie
-#define N 27
-
-// Represents a node in a trie
-typedef struct node
-{
-    bool is_word;
-    struct node *children[N];
+    struct node *children[N + 1];
 }
 node;
 
@@ -66,6 +30,9 @@ int numWords = 0;
 // node of the alphabet being computed
 node *current;
     
+// index of current word
+int index;
+
 char *alphabet = "abcdefghijklmnopqrstuvwxyz'";
 
 // Loads dictionary into memory, returning true if successful else false
@@ -105,8 +72,15 @@ bool load(const char *dictionary)
         for (int i = 0; i < strlen(word) - 1; i++)
         {
             // find the corresponding index of the letter in the string alphabet
-            char *letter = strchr(alphabet, word[i]);
-            int index = (int)(letter - alphabet);
+            if (word[i] != '\'')
+            {
+                char *letter = strchr(alphabet, word[i]);
+                index = (int)(letter - alphabet);
+            }
+            else
+            {
+                index = 27;
+            }
             
             // for the first letter in each word 
             if (i == 0)
@@ -163,8 +137,15 @@ bool check(const char *word)
         char currletter = tolower(word[i]);
         
         // find the corresponding index of the letter in the string alphabet
-        char *letter = strchr(alphabet, currletter);
-        int index = (int)(letter - alphabet);
+            if (word[i] != '\'')
+            {
+                char *letter = strchr(alphabet, word[i]);
+                index = (int)(letter - alphabet);
+            }
+            else
+            {
+                index = 27;
+            }
         
         if (i == 0)
         {
@@ -197,15 +178,6 @@ bool check(const char *word)
     return true;
 }
 
-// Unloads dictionary from memory, returning true if successful else false
-bool unload(void)
-{
-    node *currentNode = root;
-    clearmemory(currentNode);
-    return true;
-}
-
-
 void clearmemory(node *curr)
 {
     for (int i = 0; i < N; i++)
@@ -213,7 +185,14 @@ void clearmemory(node *curr)
         if (curr->children[i] != NULL)
         {
             clearmemory(curr->children[i]);
-            free(current);
         }
     }
+    free(curr);
+}
+
+// Unloads dictionary from memory, returning true if successful else false
+bool unload(void)
+{
+    clearmemory(root);
+    return true;
 }
