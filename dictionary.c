@@ -34,6 +34,40 @@ node *previous;
     
 char *alphabet = "abcdefghijklmnopqrstuvwxyz'";
 
+// Loads dictionary into memory, returning true if successful e// Implements a dictionary's functionality
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#include "dictionary.h"
+
+// Represents number of children for each node in a trie
+#define N 27
+
+// Represents a node in a trie
+typedef struct node
+{
+    bool is_word;
+    struct node *children[N];
+}
+node;
+
+void clearmemory(node *curr);
+
+// Represents a trie
+node *root;
+
+// num of words in dictionary
+int numWords = 0;
+
+// node of the alphabet being computed
+node *current;
+    
+char *alphabet = "abcdefghijklmnopqrstuvwxyz'";
+
 // Loads dictionary into memory, returning true if successful else false
 bool load(const char *dictionary)
 {
@@ -65,7 +99,7 @@ bool load(const char *dictionary)
     
     // Insert words into trie
     // fgets() = get the word in each line
-    while (fgets(word, LENGTH + 1, file) != NULL)
+    while (fgets(word, LENGTH, file) != NULL)
     {
         // for each letter in the word
         for (int i = 0; i < strlen(word) - 1; i++)
@@ -89,9 +123,6 @@ bool load(const char *dictionary)
             // if not the first letter in word
             else
             {
-                // previous node for experimental purposes
-                previous = current;
-                
                 // if children node doesn't exist
                 if (!current->children[index])
                 {
@@ -169,32 +200,20 @@ bool check(const char *word)
 // Unloads dictionary from memory, returning true if successful else false
 bool unload(void)
 {
-    for (int i = 0; i <= LENGTH; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            clearmemory(root->children[j]);
-        }
-    }
-    
+    node *currentNode = root;
+    clearmemory(currentNode);
     return true;
 }
 
 
-int clearmemory(node *curr)
+void clearmemory(node *curr)
 {
-    if (!current)
+    for (int i = 0; i < N; i++)
     {
-        return 0;
-    }
-    else
-    {
-        for (int i = 0; i < N; i++)
+        if (curr->children[i] != NULL)
         {
-            current = current->children[i];
-            clearmemory(current);
+            clearmemory(curr->children[i]);
+            free(current);
         }
-        free(current);
     }
-    return 0;
 }
