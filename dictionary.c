@@ -15,7 +15,7 @@
 typedef struct node
 {
     bool is_word;
-    struct node *children[N + 1];
+    struct node *children[N];
 }
 node;
 
@@ -69,7 +69,7 @@ bool load(const char *dictionary)
     while (fgets(word, LENGTH, file) != NULL)
     {
         // for each letter in the word
-        for (int i = 0; i < strlen(word) - 1; i++)
+        for (int i = 0; i < strlen(word); i++)
         {
             // find the corresponding index of the letter in the string alphabet
             if (word[i] != '\'')
@@ -79,7 +79,7 @@ bool load(const char *dictionary)
             }
             else
             {
-                index = 27;
+                index = 26;
             }
             
             // for the first letter in each word 
@@ -196,3 +196,4 @@ bool unload(void)
     clearmemory(root);
     return true;
 }
+
